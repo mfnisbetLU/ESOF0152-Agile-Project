@@ -2,14 +2,23 @@ import React from 'react';
 import {useState} from 'react';
 import styled from 'styled-components';
 import { RenderLogo } from './Logo.js';
-import { makeRequest } from './APIRecipe';
+import { makeRequest } from './APIRecipe.js';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
+  const [responseData, setResponseData] = useState(null);
 
   // Handles search button click
-  const handleClick1 = (newValue) => {
-    makeRequest(newValue);
+  const handleClick1 = () => {
+    makeRequest(inputValue)
+      .then(response => {
+        setResponseData(response);
+        console.log("Response Data: ");
+        console.log(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (
@@ -26,6 +35,21 @@ function App() {
         <Container>
         <Button onClick={() => {handleClick1(inputValue)}}>Get Results</Button>
         </Container>
+
+        {responseData && responseData.hints.map((hint, index) => (
+          <div key={index}>
+            <h2>{hint.food.label}</h2>
+            <img src={hint.food.image} alt={hint.food.label} />
+            <ul>
+              {hint.measures.map((measure, index) => (
+                <li key={index}>
+                  {measure.label}: {measure.quantity} {measure.unit}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
       </Header>
     </BackGround>
   );
@@ -33,7 +57,7 @@ function App() {
 
 const BackGround = styled.div`
 background-color: #7AEF68;
-height: 2500px;
+min-height: 2160px;
 `
 
 const Header = styled.header`
