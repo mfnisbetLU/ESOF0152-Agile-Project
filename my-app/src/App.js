@@ -3,6 +3,7 @@ import {useState} from 'react';
 import styled from 'styled-components';
 import { RenderLogo } from './Logo.js';
 import { makeRequest } from './APIRecipe.js';
+import { RecipeCards } from './RecipeCards.js';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -35,20 +36,7 @@ function App() {
         <Container>
         <Button onClick={() => {handleClick1(inputValue)}}>Get Results</Button>
         </Container>
-
-        {responseData && responseData.hints.map((hint, index) => (
-          <div key={index}>
-            <h2>{hint.food.label}</h2>
-            <img src={hint.food.image} alt={hint.food.label} />
-            <ul>
-              {hint.measures.map((measure, index) => (
-                <li key={index}>
-                  {measure.label}: {measure.quantity} {measure.unit}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {responseData && <RecipeCards responseData={responseData} />}
 
       </Header>
     </BackGround>
