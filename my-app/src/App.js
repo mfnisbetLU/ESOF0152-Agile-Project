@@ -1,11 +1,15 @@
 import React from 'react';
 import {useState} from 'react';
+import { makeRequest } from './APIRecipe.js';
 import styled from 'styled-components';
 import { RenderLogo } from './Logo.js';
 import { makeFoodRequest } from './APIFood.js';
 import { makeRecipeRequest } from './APIRecipe.js';
 import { FoodCards } from './FoodCards.js';
 import { RecipeCards } from './RecipeCards.js';
+import styled from 'styled-components'
+import Header from './Header.js'
+
 
 function App() {
   const [InputFoodValue, setInputFoodValue] = useState('');
@@ -56,7 +60,11 @@ function App() {
   }
 
   return (
-    <BackGround>
+    <BackGround style={{ background: 'linear-gradient(to bottom,#EAEAEA, #DBDBDB, #F2F2F2, #ADA996)' }}>
+      {/* <RenderLogo size={100}/> */}   
+        
+        <RecipeInput placeholder="Search Item" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+        <SearchingSpan>Searching: {inputValue}</SearchingSpan>
       <Header>
       <RenderLogo size={100}/>
         <LogoText>
@@ -75,8 +83,6 @@ function App() {
             <ValueInput placeholder="apple pie" value={InputRecipeValue} onChange={(e) => setInputRecipeValue(e.target.value)}/>
           </SearchingSpan>
           </div>
-
-
           <div>
             <SearchingSpan>
               Quantity:
@@ -108,10 +114,33 @@ const CardsWrapper = styled.div`
 `
 
 const BackGround = styled.div`
-background-color: #7AEF68;
-min-height: 2160px;
+min-height: 100vh;
+background:linear-gradient(to bottom,#EAEAEA, #DBDBDB, #F2F2F2, #ADA996);
 `
 
+// const Header = styled.header`
+//   background-color: green;
+//   width: 500px;
+// `
+
+// const LogoText = styled.p`
+//   color: white;
+//   font-size: 20px;
+//   font-family: Arial, Helvetica, sans-serif;
+//   font-weight: bold;
+//   padding-left: 10px;
+//`
+
+
+// const Header = styled.header`
+//   background: green;
+// `
+
+// const Paragraph = styled.p`
+//   color: white;
+//   font-size: 20;
+// `
+=======
 const Header = styled.header`
   background-color: green;
   min-width: 800px;
@@ -134,16 +163,27 @@ font-family: Arial, Helvetica, sans-serif;
 `
 
 const Button = styled.button`
-  background: white;
-  font-size: 20px;
+  background: black;
   border-radius: 3px;
-  border: 2px solid red;
-  color: red;
+  color: white;
   margin: 0.5em 1em;
-  padding: 0.25em 2em;
-  width: 200px;
-  height: 80px;
-  cursor: pointer;
+  padding: 0.25em 1em;
+  width: 150px;
+  height: 50px;
+  alignItems: 'center',
+
+`;
+
+const SearchingSpan = styled.span`
+color: black;
+font-size: 20px;
+font-weight: bold;
+font-family: Arial, Helvetica, sans-serif;
+padding-left: 5px;
+padding: 0.25em 2em;
+width: 200px;
+height: 80px;
+cursor: pointer;
 `;
 
 const SearchingSpan = styled.span`

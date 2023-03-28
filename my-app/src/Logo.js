@@ -1,20 +1,35 @@
-import CupAlpha from './CupAlpha.png'
-import styled from 'styled-components';
+// <<<<<<< Updated upstream
+// import CupAlpha from './CupAlpha.png'
+// import styled from 'styled-components';
 
-export function RenderLogo({size}){
-    return(
-        <AppLogo>
-             <img src={CupAlpha} alt="Company Logo" 
-             width={size} 
-             height={size}
-             />        
-        </AppLogo>
-    )
-}
+// export function RenderLogo({size}){
+//     return(
+//         <AppLogo>
+//              <img src={CupAlpha} alt="Company Logo" 
+//              width={size} 
+//              height={size}
+//              />        
+//         </AppLogo>
+//     )
+// }
 
-const AppLogo = styled.div`
-  padding-top: 10px;
-  padding-left: 10px;
-  height: ${(props) => props.size}
-  width: ${(props) => props.size}
-`
+// const AppLogo = styled.div`
+//   padding-top: 10px;
+//   padding-left: 10px;
+//   height: ${(props) => props.size}
+//   width: ${(props) => props.size}
+// `
+// =======
+// // import CupAlpha from './CupAlpha.png'
+
+// // export function RenderLogo({size}){
+// //     return(
+// //         <div>
+// //              <img src={CupAlpha} alt="Company Logo" 
+// //              width={size} 
+// //              height={size}
+// //              />        
+// //         </div>
+// //     )
+// // }
+// >>>>>>> Stashed changes
