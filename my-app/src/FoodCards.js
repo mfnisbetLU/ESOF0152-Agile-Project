@@ -3,10 +3,19 @@ import React from "react";
 
 // Renders full array of returned results
 // Trying to figure out how to use the measures values to calculate certain amounts
-export function RecipeCards({ FoodResponseData, amount}) {
+export function FoodCards({ FoodResponseData, amount, onSelectLabel }) {
   return (
     <div>
       {FoodResponseData.hints.map((hint, index) => {
+        const measuresWithQuantity = hint.measures.map(measure => ({
+          ...measure,
+          quantity: `${amount} ${measure.label}`
+        }));
+
+        const handleLabelSelect = () => {
+          onSelectLabel(hint.food.label);
+        };
+
         return (
           <CardContainer key={index}>
             <RecipeCard>
@@ -22,6 +31,14 @@ export function RecipeCards({ FoodResponseData, amount}) {
               <CardText>Fat: {Math.round(amount * hint.food.nutrients.FAT * 100) / 100} grams</CardText>
               <CardText>Protein: {Math.round(amount * hint.food.nutrients.PROCNT * 100) / 100} grams</CardText>
               <CardText>Carbs: {Math.round(amount * hint.food.nutrients.CHOCDF * 100) / 100} grams</CardText>
+              <Button onClick={handleLabelSelect}>Search Recipes</Button>
+              <ul>
+                {measuresWithQuantity.map((measure, index) => (
+                  <li key={index}>
+                    {measure.label}: {measure.quantity} {measure.unit}
+                  </li>
+                ))}
+              </ul>
 
             </RecipeCard>
           </CardContainer>
@@ -48,11 +65,11 @@ const CardContainer = styled.div`
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-right: 20px;
   border: 8px solid black;
   border-radius: 40px;
-  margin-right: 150px;
+  margin-right: 20px;
   margin-left: 10px;
+  padding-right: 40px;
   min-width: 200px;
   max-width: 300px;
 `
@@ -68,3 +85,14 @@ const CardImage = styled.img`
   border-radius: 30px;
   border: 6px solid black;
 `
+
+const Button = styled.button`
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  padding: 10px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 200px;
+  margin-left: 50px;
+`;

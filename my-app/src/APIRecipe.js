@@ -1,27 +1,25 @@
 import axios from "axios";
-// q param is query text, in this case the value the user entered
-// Can also take 'r' which is the recipe ID, that's how we'll use it to look up
-// Handles the get request, should implement secrets
-function createOptions(value){
+
+function createRecipeOptions(value){
 const Options = {
   method: 'GET',
-  url: 'https://edamam-food-and-grocery-database.p.rapidapi.com/parser',
-  params: {ingr: value},
+  url: 'https://edamam-recipe-search.p.rapidapi.com/search',
+  params: {value},
   headers: {
-    'X-RapidAPI-Key': '7692bae7cfmshac9d83a53f8151bp19f475jsn305a0583021f',
-    'X-RapidAPI-Host': 'edamam-food-and-grocery-database.p.rapidapi.com'
-  }
+    'X-RapidAPI-Key': 'f4509876e7msh875d9e662afe170p18439bjsnf07d0ac0b68f',
+    'X-RapidAPI-Host': 'edamam-recipe-search.p.rapidapi.com'
+        }
+    }
+    return Options;
 };
-  return Options;
-}
 
 // Handles the API requests
-export function makeRequest(value) { 
-  const options = createOptions(value);
-  return axios.request(options)
-    .then(response => response.data)
-    .catch(error => {
-      console.error(error);
-      throw error;
-    });
-}
+export function makeRecipeRequest(value) { 
+    const options = createRecipeOptions(value);
+    return axios.request(options)
+      .then(response => response.data)
+      .catch(error => {
+        console.error(error);
+        throw error;
+      });
+  }
