@@ -24,7 +24,7 @@ const Options = {
 // Handles the API requests
 // calls the createOptions function to get list of options
 // Turns response into json object then seperates them by foodID into an array of objects
-export function makeRequest(value) { 
+export function makeFoodRequest(value) { 
   axios.request(createOptions(value)).then(function (response) {
     const jsonString = JSON.stringify(response.data, null, 4)
     const jsonObject = JSON.parse(jsonString);
