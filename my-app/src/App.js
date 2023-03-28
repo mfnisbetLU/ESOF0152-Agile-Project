@@ -1,9 +1,12 @@
 import React from 'react';
 import {useState} from 'react';
-import styled from 'styled-components';
-import { RenderLogo } from './Logo.js';
 import { makeRequest } from './APIRecipe.js';
 import { RecipeCards } from './RecipeCards.js';
+import styled from 'styled-components'
+//import { RenderLogo } from './Logo.js'
+//import { makeRequest } from './APIRecipe'
+import Header from './Header.js'
+
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -23,14 +26,11 @@ function App() {
   };
 
   return (
-    <BackGround>
-      <Header>
-      <RenderLogo size={100}/>
-        <LogoText>
-          Recipe Getter
-        </LogoText>
-      
-        <RecipeInput placeholder="apple" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+    <BackGround style={{ background: 'linear-gradient(to bottom,#EAEAEA, #DBDBDB, #F2F2F2, #ADA996)' }}>
+      {/* <RenderLogo size={100}/> */}
+      <Header/>     
+        
+        <RecipeInput placeholder="Search Item" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
         <SearchingSpan>Searching: {inputValue}</SearchingSpan>
 
         <Container>
@@ -38,43 +38,52 @@ function App() {
         </Container>
         {responseData && <RecipeCards responseData={responseData} />}
 
-      </Header>
     </BackGround>
   );
 }
 
 const BackGround = styled.div`
-background-color: #7AEF68;
-min-height: 2160px;
+min-height: 100vh;
+background:linear-gradient(to bottom,#EAEAEA, #DBDBDB, #F2F2F2, #ADA996);
 `
 
-const Header = styled.header`
-  background-color: green;
-  width: 500px;
-`
+// const Header = styled.header`
+//   background-color: green;
+//   width: 500px;
+// `
 
-const LogoText = styled.p`
-  color: white;
-  font-size: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  padding-left: 10px;
-`
+// const LogoText = styled.p`
+//   color: white;
+//   font-size: 20px;
+//   font-family: Arial, Helvetica, sans-serif;
+//   font-weight: bold;
+//   padding-left: 10px;
+//`
+
+
+// const Header = styled.header`
+//   background: green;
+// `
+
+// const Paragraph = styled.p`
+//   color: white;
+//   font-size: 20;
+// `
 
 const Button = styled.button`
-  background: white;
-  font-size: 20px;
+  background: black;
   border-radius: 3px;
-  border: 2px solid red;
-  color: red;
+  color: white;
   margin: 0.5em 1em;
   padding: 0.25em 1em;
   width: 150px;
   height: 50px;
+  alignItems: 'center',
+
 `;
 
 const SearchingSpan = styled.span`
-color: white;
+color: black;
 font-size: 20px;
 font-weight: bold;
 font-family: Arial, Helvetica, sans-serif;
