@@ -63,7 +63,9 @@ export function RecipeCards({ recipes, savedRecipes, setSavedRecipes }) {
             <CardText>Steps: {recipe.instructions.length}</CardText>
 
             <Button onClick={() => handleSaveClick(recipe)}>Save Recipe</Button>
-            <Button onClick={() => toggleExpand(recipe.id)}>More Details</Button>
+            <Button onClick={() => toggleExpand(recipe.id)}>
+              {expandedRecipeId === recipe.id ? "Hide Details" : "More Details"}
+            </Button>
 
             {expandedRecipeId === recipe.id && (
               <DetailsSection>

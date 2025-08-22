@@ -26,6 +26,7 @@ function App() {
   const [RecipeResponseData, setRecipeResponseData] = useState(null);
   const [count, setCount] = React.useState(1);
   const [savedRecipes, setSavedRecipes] = useState(JSON.parse(localStorage.getItem(SAVE_KEY)) || {});
+  const [unit, setUnit] = useState("gram");
 
   // Handles search button click
   // Stores the response data, when there is data renders the FoodCards component
@@ -103,24 +104,35 @@ const handleClick2 = () => {
           </SearchingSpan>
           </div>
 
-          <div>
-            <SearchingSpan>
-              Quantity:
-              <ValueInput placeholder="1" value={count} onChange={handleCountChange} />
-              <Button onClick={() => {handleClick1(InputFoodValue)}}>Search Ingredients</Button>
-              <Button onClick={() => {handleClick2(InputRecipeValue)}}>Search Recipes</Button>
-              <div>
-                Saved Ingredient: {InputRecipeValue}
-              </div>
-            </SearchingSpan>
-          </div>
+        <div>
+          <SearchingSpan>
+            Quantity:
+            <ValueInput placeholder="1" value={count} onChange={handleCountChange} />
+            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+              <option value="gram">Gram</option>
+              <option value="ounce">Ounce</option>
+              <option value="pound">Pound</option>
+              <option value="kilogram">Kilogram</option>
+              <option value="cup">Cup</option>
+              <option value="serving">Serving</option>
+              <option value="whole">Whole</option>
+            </select>
+            <Button onClick={() => {handleClick1(InputFoodValue)}}>Search Ingredients</Button>
+            <Button onClick={() => {handleClick2(InputRecipeValue)}}>Search Recipes</Button>
+          </SearchingSpan>
+        </div>
           
         </RegularText>
       </Header>
 
         <SearchingSpan>
           <CardsWrapper>
-            {FoodResponseData && <FoodCards FoodResponseData={FoodResponseData} amount={count} onSelectLabel={handleInputAndClick}/>}
+            {FoodResponseData && <FoodCards 
+                                    FoodResponseData={FoodResponseData} 
+                                    amount={count} 
+                                    unit={unit}
+                                    onSelectLabel={handleInputAndClick}
+                                  />}
             <RecipeCards recipes={RecipeResponseData} amount={count} savedRecipes={savedRecipes} setSavedRecipes={setSavedRecipes}/>
           </CardsWrapper>
         </SearchingSpan>
