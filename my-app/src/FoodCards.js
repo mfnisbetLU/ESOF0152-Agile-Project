@@ -108,11 +108,16 @@ function FoodCard({ food, measures, amount, unit, weightPerUnit, onSelectLabel }
             <>
               <CardMeasure>Serving Conversions</CardMeasure>
               <ul>
-                {measures.map((m, idx) => (
-                  <li key={idx}>
-                    {m.label}: {m.weight} g
-                  </li>
-                ))}
+                {measures.map((m, idx) => {
+                  const formattedWeight = Number(m.weight)
+                    .toFixed(2)
+                    .replace(/\.?0+$/, "");
+                  return (
+                    <li key={idx}>
+                      {m.label}: {formattedWeight} g
+                    </li>
+                  );
+                })}
               </ul>
             </>
           )}
