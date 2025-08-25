@@ -27,6 +27,8 @@ function App() {
   const [count, setCount] = React.useState(1);
   const [savedRecipes, setSavedRecipes] = useState(JSON.parse(localStorage.getItem(SAVE_KEY)) || {});
   const [unit, setUnit] = useState("gram");
+  const [showSavedRecipes, setShowSavedRecipes] = useState(false);
+  
 
   // Handles search button click
   // Stores the response data, when there is data renders the FoodCards component
@@ -83,6 +85,24 @@ const handleClick2 = () => {
       });
   };
 
+  // Save a recipe
+  const handleSaveClick = (recipe) => {
+    const newSavedRecipes = {
+      ...savedRecipes,
+      [recipe.id]: {
+        ...recipe 
+      }
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(newSavedRecipes));
+    setSavedRecipes(newSavedRecipes);
+  };
+
+  // Reset saved recipes
+  const handleResetSavedRecipes = () => {
+    localStorage.removeItem(SAVE_KEY);
+    setSavedRecipes({});
+  };
+
   return (
     <BackGround>
       <Header>
@@ -105,6 +125,7 @@ const handleClick2 = () => {
           </div>
 
         <div>
+
           <SearchingSpan>
             Quantity:
             <ValueInput placeholder="1" value={count} onChange={handleCountChange} />
@@ -126,6 +147,27 @@ const handleClick2 = () => {
       </Header>
 
         <SearchingSpan>
+          <div style={{ textAlign: "center", margin: "20px" }}>
+            <Button onClick={() => setShowSavedRecipes(!showSavedRecipes)}>
+              {showSavedRecipes ? "Hide Saved Recipes" : "Show Saved Recipes"}
+            </Button>
+          </div>
+            {showSavedRecipes && (
+              <div>
+                {Object.keys(savedRecipes).length === 0 ? (
+                  <p style={{ textAlign: "center" }}>No saved recipes yet.</p>
+                ) : (
+                  <RecipeCards
+                    recipes={Object.values(savedRecipes)}
+                    compact={true} 
+                  />
+                )}
+                <Button onClick={handleResetSavedRecipes}>
+                  Reset Saved Recipes
+                </Button>
+              </div>
+            )}
+
           <CardsWrapper>
             {FoodResponseData && <FoodCards 
                                     FoodResponseData={FoodResponseData} 
@@ -133,7 +175,11 @@ const handleClick2 = () => {
                                     unit={unit}
                                     onSelectLabel={handleInputAndClick}
                                   />}
-            <RecipeCards recipes={RecipeResponseData} amount={count} savedRecipes={savedRecipes} setSavedRecipes={setSavedRecipes}/>
+            <RecipeCards
+              recipes={RecipeResponseData}
+              amount={count}
+              onSaveRecipe={handleSaveClick}
+            />
           </CardsWrapper>
         </SearchingSpan>
       <ScrollToTopButton/>
