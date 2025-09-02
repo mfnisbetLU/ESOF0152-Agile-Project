@@ -1,88 +1,132 @@
 import styled from 'styled-components';
-import React from "react";
+import React, { useState } from "react";
 import CaloriesIcon from "./NutrientIcons/Calories.png"
 import CarbsIcon from "./NutrientIcons/Carbs.png"
 import FatIcon from "./NutrientIcons/Fats.png"
 import ProteinIcon from "./NutrientIcons/Protein.png"
 import {RenderIcon} from './RenderIcon.js';
 
+const nutrientMap = {
+  ENERC_KCAL: { label: "Calories", unit: "kcal", icon: CaloriesIcon },
+  FAT: { label: "Fat", unit: "g", icon: FatIcon },
+  PROCNT: { label: "Protein", unit: "g", icon: ProteinIcon },
+  CHOCDF: { label: "Carbs", unit: "g", icon: CarbsIcon }
+};
+
 /**
  * This component renders the array of hints passed from the APIFood functions
  * Takes the response data from APIFood, the amount from app.js quantity, and can return the label of the card that was pressed
  * The number of calories is multiplied by the quantity
- * The API has natural word processing capabilities so if the user entered "3 slices of pizza" it should be able to ...
+ * The API has natural word processing capabilities so if the user entered "3 slices of pizza" it should be able to
  * return the calories for '3 slices' if it matched, I couldn't figure that out
  * So instead just returns full measures array and multplies by the quantity
  * Results are tabluated with a little icon beside them
  * Uses the index to sort the cards
  */
-export function FoodCards({ FoodResponseData, amount, onSelectLabel }) {
+
+export function FoodCards({ FoodResponseData, amount, unit, onSelectLabel }) {
+  if (!FoodResponseData?.hints) return null;
+
   return (
     <FlexContainer>
       {FoodResponseData.hints.map((hint, index) => {
-        const measuresWithQuantity = hint.measures.map(measure => ({
-          ...measure,
-          quantity: `${(amount / measure.weight).toFixed(5)} ${measure.label}`
-        }));
+        const { food, measures = [] } = hint;
+
+        const selectedMeasure = unit
+          ? measures.find((m) => m.label.toLowerCase() === unit.toLowerCase())
+          : null;
+
+        const weightPerUnit = selectedMeasure?.weight || 1;
 
         return (
-          <CardContainer key={index}>
-            <RecipeCard>
-              <CardHeader>{hint.food.label}</CardHeader>
-              <CardImage
-                src={
-                  hint.food.image ||
-                  'https://st4.depositphotos.com/14953852/22772/v/600/depositphotos_227725020-stock-illustration-image-available-icon-flat-vector.jpg'
-                }
-                alt={hint.food.label}
+          <FoodCard
+            key={index}
+            food={food}
+            measures={measures}
+            amount={amount}
+            unit={unit}
+            weightPerUnit={weightPerUnit}
+            onSelectLabel={onSelectLabel}
           />
-          <CardText>
-          <table>
-            <thead>
-                  <tr>
-                    <th></th>
-                    <th>Nutrient</th>
-                    <th>Amount</th>
-                  </tr>
-            </thead>
-              <tbody>
-                <tr>
-                  <td><RenderIcon image={CaloriesIcon} size={30}/></td>
-                  <td>Calories</td>
-                  <td>{Math.round(amount * hint.food.nutrients.ENERC_KCAL * 100) / 100} kcal</td>
-                </tr>
-                <tr>
-                  <td><RenderIcon image={FatIcon} size={30}/></td>
-                  <td>Fat</td>
-                  <td>{Math.round(amount * hint.food.nutrients.FAT * 100) / 100} grams</td>
-                </tr>
-                <tr>
-                  <td><RenderIcon image={ProteinIcon} size={30}/></td>
-                  <td>Protein</td>
-                  <td>{Math.round(amount * hint.food.nutrients.PROCNT * 100) / 100} grams</td>
-                </tr>
-                <tr>
-                  <td><RenderIcon image={CarbsIcon} size={30}/></td>
-                  <td>Carbs</td>
-                  <td>{Math.round(amount * hint.food.nutrients.CHOCDF * 100) / 100} grams</td>
-                </tr>
-              </tbody>
-              </table>
-              <Button onClick={() => onSelectLabel(hint.food.label)}>Search Recipes</Button>
-              <CardMeasure>Serving Quantity Measure</CardMeasure>
-                    {measuresWithQuantity.map((measure, index) => (
-                              <li key={index}>
-                                {measure.label}: {measure.quantity} {measure.unit}
-                              </li>
-                            ))}
-                  </CardText>
-                </RecipeCard>
-              </CardContainer> 
-          );
-        })}
-     </FlexContainer>
+        );
+      })}
+    </FlexContainer>
   );
 }
+
+function FoodCard({ food, measures, amount, unit, weightPerUnit, onSelectLabel }) {
+  const [expanded, setExpanded] = useState(false);
+
+  // Calculate total grams based on quantity * unit weight
+  const totalGrams = amount * weightPerUnit;
+
+  return (
+    <CardContainer>
+      <RecipeCard>
+        <CardHeader>{food.label}</CardHeader>
+        <CardImage
+          src={
+            food.image ||
+            "https://st4.depositphotos.com/14953852/22772/v/600/depositphotos_227725020-stock-illustration-image-available-icon-flat-vector.jpg"
+          }
+          alt={food.label}
+        />
+
+        <CardText>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Nutrient</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(nutrientMap).map(([key, { label, unit, icon }]) => (
+                <tr key={key}>
+                  <td><RenderIcon image={icon} size={30} /></td>
+                  <td>{label}</td>
+                  <td>
+                    {food.nutrients[key]
+                      ? (totalGrams * food.nutrients[key] / 100).toFixed(2) + " " + unit
+                      : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <Button onClick={() => onSelectLabel(food.label)}>
+            Search Recipes
+          </Button>
+
+          <Button onClick={() => setExpanded(!expanded)}>
+            {expanded ? "Hide Details" : "Show Details"}
+          </Button>
+
+          {expanded && (
+            <>
+              <CardMeasure>Serving Conversions</CardMeasure>
+              <ul>
+                {measures.map((m, idx) => {
+                  const formattedWeight = Number(m.weight)
+                    .toFixed(2)
+                    .replace(/\.?0+$/, "");
+                  return (
+                    <li key={idx}>
+                      {m.label}: {formattedWeight} g
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+        </CardText>
+      </RecipeCard>
+    </CardContainer>
+  );
+}
+
 
 const CardHeader = styled.header`
   font-size: 40px;

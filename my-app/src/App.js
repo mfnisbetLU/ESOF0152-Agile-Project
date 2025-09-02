@@ -11,13 +11,13 @@ import ScrollToTopButton from './ScrollToTopButton.js';
 // Local save key to save recipes
 const SAVE_KEY = "savedRecipes";
 
-/**
- * Main app component
- * Has 6 states, InputFood/RecipeValue holds the search bar values
- * Food/Recipe ResponseData is used to display the data in the recipe cards
- * Count is used to change the quantiy of the searched for food/recipe
- * savedRecipe holds the local saved recipes
- */
+/*
+* Main app component
+* Has 6 states, InputFood/RecipeValue holds the search bar values
+* Food/Recipe ResponseData is used to display the data in the recipe cards
+* Count is used to change the quantiy of the searched for food/recipe
+* SavedRecipe holds the local saved recipes
+*/
 
 function App() {
   const [InputFoodValue, setInputFoodValue] = useState('');
@@ -26,6 +26,9 @@ function App() {
   const [RecipeResponseData, setRecipeResponseData] = useState(null);
   const [count, setCount] = React.useState(1);
   const [savedRecipes, setSavedRecipes] = useState(JSON.parse(localStorage.getItem(SAVE_KEY)) || {});
+  const [unit, setUnit] = useState("gram");
+  const [showSavedRecipes, setShowSavedRecipes] = useState(false);
+  
 
   // Handles search button click
   // Stores the response data, when there is data renders the FoodCards component
@@ -41,20 +44,19 @@ function App() {
       });
   };
 
-  // Handles recipe button click
-  // Can use saved ingredients
-  // Passes values to recipe card component
-  const handleClick2 = () => {
-    makeRecipeRequest(InputRecipeValue)
-      .then(response => {
-        setRecipeResponseData(response.data.hits.map(hit => hit.recipe));
-        console.log("Recipe Data: ");
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
+// Handles recipe button click
+// Can use saved ingredients
+// Passes values to recipe card component
+const handleClick2 = () => {
+  makeRecipeRequest(InputRecipeValue)
+    .then(normalizedRecipes => {
+      setRecipeResponseData(normalizedRecipes); 
+      console.log("Recipe Data: ", normalizedRecipes);
+    })
+    .catch(error => {
+      console.error("Error fetching recipes:", error);
+    });
+};
 
   // Handles quantity bar, if blank the value is 0
   // Only allows integers to be entered
@@ -71,18 +73,34 @@ function App() {
   }
 
   // Makes a recipe search using the Food Card button
-  // Passes values to the recipie card component
+  // Passes values to the recipe card component
   const handleInputAndClick = (value) => {
-      makeRecipeRequest(value)
-      .then(response => {
-        setRecipeResponseData(response.data.hits.map(hit => hit.recipe));
-        console.log("Recipe Data: ");
-        console.log(response.data);
-  
+    makeRecipeRequest(value)
+      .then(normalizedRecipes => {
+        setRecipeResponseData(normalizedRecipes);
+        console.log("Recipe Data: ", normalizedRecipes);
       })
       .catch(error => {
-        console.error(error);
+        console.error("Error fetching recipes:", error);
       });
+  };
+
+  // Save a recipe
+  const handleSaveClick = (recipe) => {
+    const newSavedRecipes = {
+      ...savedRecipes,
+      [recipe.id]: {
+        ...recipe 
+      }
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(newSavedRecipes));
+    setSavedRecipes(newSavedRecipes);
+  };
+
+  // Reset saved recipes
+  const handleResetSavedRecipes = () => {
+    localStorage.removeItem(SAVE_KEY);
+    setSavedRecipes({});
   };
 
   return (
@@ -106,25 +124,62 @@ function App() {
           </SearchingSpan>
           </div>
 
-          <div>
-            <SearchingSpan>
-              Quantity:
-              <ValueInput placeholder="1" value={count} onChange={handleCountChange} />
-              <Button onClick={() => {handleClick1(InputFoodValue)}}>Search Ingredients</Button>
-              <Button onClick={() => {handleClick2(InputRecipeValue)}}>Search Recipes</Button>
-              <div>
-                Saved Ingredient: {InputRecipeValue}
-              </div>
-            </SearchingSpan>
-          </div>
+        <div>
+
+          <SearchingSpan>
+            Quantity:
+            <ValueInput placeholder="1" value={count} onChange={handleCountChange} />
+            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+              <option value="gram">Gram</option>
+              <option value="ounce">Ounce</option>
+              <option value="pound">Pound</option>
+              <option value="kilogram">Kilogram</option>
+              <option value="cup">Cup</option>
+              <option value="serving">Serving</option>
+              <option value="whole">Whole</option>
+            </select>
+            <Button onClick={() => {handleClick1(InputFoodValue)}}>Search Ingredients</Button>
+            <Button onClick={() => {handleClick2(InputRecipeValue)}}>Search Recipes</Button>
+          </SearchingSpan>
+        </div>
           
         </RegularText>
       </Header>
 
         <SearchingSpan>
+          <div style={{ textAlign: "center", margin: "20px" }}>
+            <Button onClick={() => setShowSavedRecipes(!showSavedRecipes)}>
+              {showSavedRecipes ? "Hide Saved Recipes" : "Show Saved Recipes"}
+            </Button>
+          </div>
+            {showSavedRecipes && (
+              <div>
+                {Object.keys(savedRecipes).length === 0 ? (
+                  <p style={{ textAlign: "center" }}>No saved recipes yet.</p>
+                ) : (
+                  <RecipeCards
+                    recipes={Object.values(savedRecipes)}
+                    compact={true} 
+                  />
+                )}
+                <Button onClick={handleResetSavedRecipes}>
+                  Reset Saved Recipes
+                </Button>
+              </div>
+            )}
+
           <CardsWrapper>
-            {FoodResponseData && <FoodCards FoodResponseData={FoodResponseData} amount={count} onSelectLabel={handleInputAndClick}/>}
-            <RecipeCards recipes={RecipeResponseData} amount={count} savedRecipes={savedRecipes} setSavedRecipes={setSavedRecipes}/>
+            {FoodResponseData && <FoodCards 
+                                    FoodResponseData={FoodResponseData} 
+                                    amount={count} 
+                                    unit={unit}
+                                    onSelectLabel={handleInputAndClick}
+                                  />}
+            <RecipeCards
+              recipes={RecipeResponseData}
+              amount={count}
+              onSaveRecipe={handleSaveClick}
+            />
           </CardsWrapper>
         </SearchingSpan>
       <ScrollToTopButton/>

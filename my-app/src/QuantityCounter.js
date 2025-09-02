@@ -23,7 +23,7 @@ export function QuantityCounter(props) {
     );
   }
 
-  /** Unused code from atempted implementation
+  /** Unused code from attempted implementation
    *        <StyledCounter>
             <QuantityCounter initialCount={count} onCountChange={handleQuantityUpdate} />
             </StyledCounter>
