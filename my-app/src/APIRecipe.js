@@ -5,6 +5,7 @@ Create options makes a GET request from the Tasty API via RapidAPI
 q: the search query
 from/size: Page controls
 tags: optional filters (like "under_30_minutes")
+Dropped in favour of normalizing the data 
 */
 // function createRecipeOptions(value) {
 //   const options = {

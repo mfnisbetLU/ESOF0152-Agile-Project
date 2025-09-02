@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 import React, { useState } from "react";
-// import HoveredRecipeDetails from "./HoveredRecipeDetails";
-
-// const SAVE_KEY = "savedRecipes";
 
 /**
  * This component renders the array of hints passed from the APIRecipe functions
@@ -12,9 +9,6 @@ import React, { useState } from "react";
  * hoveredSavedRecipe is used to store the data of the card being hovered over
  * Those details are passed to the HoveredRecipeDetails component
  * showSavedRecipes is a toggleable state to show the list of saved recipes
- * Uses the hints in the same way as the food card component with respect to the new API..
- * to display relevant details about the recipe that was searched for, either by entering in the search bar...
- * or by the search recieps button on the food card component
  */
 export function RecipeCards({ recipes, amount, onSaveRecipe, compact, showDirections }) {
   const [expandedRecipeId, setExpandedRecipeId] = useState(null);
@@ -29,7 +23,7 @@ export function RecipeCards({ recipes, amount, onSaveRecipe, compact, showDirect
           return (
             <CardContainer
               key={recipe.id || index}
-              onClick={() => compact && toggleExpand(recipe.id)} // only toggle in compact mode
+              onClick={() => compact && toggleExpand(recipe.id)} 
               style={{ cursor: compact ? "pointer" : "default" }}
             >
               <CardHeader>{recipe.title}</CardHeader>
@@ -37,14 +31,13 @@ export function RecipeCards({ recipes, amount, onSaveRecipe, compact, showDirect
 
               {compact ? (
                 <>
-                  {/* Only show buttons if expanded */}
                   {isExpanded && (
                     <>
                       {recipe.ingredients && (
                         <Dropdown>
                           <DropdownButton
                             onClick={(e) => {
-                              e.stopPropagation(); // prevent collapsing card
+                              e.stopPropagation(); 
                               e.currentTarget.nextSibling.classList.toggle("open");
                             }}
                           >

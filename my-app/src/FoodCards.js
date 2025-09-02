@@ -17,7 +17,7 @@ const nutrientMap = {
  * This component renders the array of hints passed from the APIFood functions
  * Takes the response data from APIFood, the amount from app.js quantity, and can return the label of the card that was pressed
  * The number of calories is multiplied by the quantity
- * The API has natural word processing capabilities so if the user entered "3 slices of pizza" it should be able to ...
+ * The API has natural word processing capabilities so if the user entered "3 slices of pizza" it should be able to
  * return the calories for '3 slices' if it matched, I couldn't figure that out
  * So instead just returns full measures array and multplies by the quantity
  * Results are tabluated with a little icon beside them
